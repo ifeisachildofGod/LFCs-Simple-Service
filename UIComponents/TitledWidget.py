@@ -6,20 +6,20 @@ from base_widgets import *
 
 class TitledWidget(BaseWidget):
     STYLESHEET = """
-    QWidget.TitledWidget {
-        background-color: orange;
+    QWidget.TitleArea {
+        background-color: #2d2d2d;
     }
     
-    QWidget.TitleArea {
-        background-color: #8f0ff0;
+    QLabel.Title {
+        color: #9b9b9b;
     }
     
     QWidget.Body {
-        background-color: black;
+        background-color: #202020;
     }
     """
     
-    def __init__(self, title: str | QWidget, widget: QWidget, *, scrollable: bool = False, extra_title_widget: QWidget | None = None):
+    def __init__(self, title: str | QWidget, widget: QWidget, *extra_title_widgets: QWidget, scrollable: bool = False):
         super().__init__()
         self.getWidget().setProperty("class", "TitledWidget")
         self.getWidget().setStyleSheet(self.STYLESHEET)
@@ -42,7 +42,8 @@ class TitledWidget(BaseWidget):
         
         titleAreaLayout.addWidget(titleWidget)
         titleAreaLayout.addStretch()
-        titleAreaLayout.addWidget(extra_title_widget)
+        for et_widget in extra_title_widgets:
+            titleAreaLayout.addWidget(et_widget)
         
         # Widget Area
         bodyWidget = BaseScrollWidget() if scrollable else BaseWidget()

@@ -1,18 +1,65 @@
 import sys
+from typing import Optional
 from PyQt6.QtWidgets import (
-    QMainWindow, QApplication, QSplitter, QToolBar,
+    QLayout, QMainWindow, QApplication, QSplitter, QToolBar,
     QVBoxLayout, QWidget, QPushButton, QHBoxLayout,
     QLabel, QLineEdit, QComboBox, QCheckBox, QScrollArea,
-    QFrame, QStackedWidget
+    QFrame, QStackedWidget, QColorDialog, QSpacerItem
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QIcon
-from components.TabView import TabView
-from components.TitledWidget import TitledWidget
-from components.IconToolOption import IconToolOption
-from components.SectionWidget import SectionWidget
+
+from UIComponents.TabView import TabView
+from UIComponents.TitledWidget import TitledWidget
+from UIComponents.SectionWidget import SectionWidget
+from UIComponents.IconToolBarOption import IconToolBarOption
+from UIComponents.SpinIconToolWidget import SpinIconToolWidget
+
+from helper_widgets import *
 
 class Window(QMainWindow):
+    STYLESHEET = """
+        QMenuBar {
+            color: white;
+            background-color: #363636;
+        }
+        
+        QMenuBar::item:selected {
+            background-color: #31456b;
+        }
+        
+        QMenu {
+            color: white;
+            background-color: #202020;
+        }
+        
+        QMenu::item:selected {
+            background-color: #31456b;
+        }
+        
+        QToolBar {
+            background-color: #595959;
+        }
+        
+        QSplitter {
+            border: 1px solid black;
+        }
+        
+        QSplitter::handle {
+            background-color: #1d1d1d;
+        }
+        
+        QWidget.SettingsWidget {
+            background-color: #202020;
+        }
+        
+        QLineEdit {
+            border: none;
+            color: #9b9b9b;
+            background-color: #202020;
+        }
+    """
+    
     def __init__(self):
         super().__init__()
         
@@ -20,41 +67,82 @@ class Window(QMainWindow):
         self._initMenuBar()
         self._initToolBar()
         
-        widg1 = QWidget()
-        lyt1 = QVBoxLayout(widg1)
-        widg1.setProperty("class", "Widg1")
-        widg1.setStyleSheet("QWidget.Widg1{background-color: red;}")
-        widg2 = QWidget()
-        widg2.setStyleSheet("background-color: yellow;")
-        widg3 = QWidget()
-        widg3.setStyleSheet("background-color: blue;")
-        widg4 = QWidget()
-        widg4.setStyleSheet("background-color: green;")
+        schedules = TitledWidget(
+            "Schedule",
+            QWidget(),
+            SpinIconToolWidget([("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print), ("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print)], 20, (QWidget(), 1)),
+            SeperatorWidget(Qt.Orientation.Horizontal, 0, 2, 15, "#9b9b9b"),
+            SpinIconToolWidget(
+                [("UIComponents/icons/pc1.png", print)],
+                20,
+                {
+                    "Add Items": {
+                        "Import Schedule File": print,
+                        None: None,
+                        "New Blank Presentation": print,
+                        None: None,
+                        "Edit Item": print,
+                        "Edit Item": print,
+                        "Edit Item": print,
+                        
+                    },
+                    "Edit Item": print,
+                    None: None,
+                    "Edit Title": print,
+                    "Edit Note": print,
+                    None: None,
+                    "Move Item Up": print,
+                    "Move Item Down": print,
+                    None: None,
+                    "Expand All Items": print,
+                    "Collapse All Items": print,
+                    None: None,
+                    "Auto-Expan Items When Dragging": print,
+                    None: None,
+                    "View": {
+                        "Large Items": print,
+                        "Medium Items": print,
+                        "Small Items": print,
+                        None: None,
+                        "Summary View": print,
+                    },
+                }
+            )
+        )
         
-        splitter = QSplitter(Qt.Orientation.Horizontal)
-        splitter.setStyleSheet("QSplitter::handle{background-color: black}")
+        preview = TitledWidget(
+            "Preview - Psalm 137:1 (HCBS)",
+            QWidget(),
+            SpinIconToolWidget([("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print), ("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print)], 20, (QWidget(), -1))
+        )
+        live = TitledWidget(
+            "Live - Psalm 137:1 (KJV)",
+            QWidget(),
+            SpinIconToolWidget([("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print), ("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print)], 20, (QWidget(), -1))
+        )
+        preview_output = TitledWidget("Preview Output", QWidget())
+        live_output = TitledWidget("Live Output", QWidget())
         
-        splitter.addWidget(TitledWidget("Title", widg1))
-        splitter.addWidget(TabView({"Song": widg2, "Scriptures": widg3, "Media": widg4}))
+        top_left_view = self.getSplitView(
+            Qt.Orientation.Horizontal,
+            self.getSplitView(Qt.Orientation.Vertical, preview, preview_output),
+            self.getSplitView(Qt.Orientation.Vertical, live, live_output)
+        )
         
-        lyt1.addWidget(SectionWidget({
-            ("ife", False): [
-                    ("ico.png", "Ife", print),
-                    ("ico.png", "Ife", print),
-                    (None, "Ife", print)
-                ],
-            ("atu", True): [
-                    ("ico.png", "Ife", print),
-                    ("ico.png", "Ife", print),
-                    ("ico.png", "Ife", print)
-                ]
-            }))
+        upper_view = self.getSplitView(Qt.Orientation.Horizontal, schedules, top_left_view)
+        base_tabview = TabView(self.getTabSettingParams())
         
-        self.main_layout.addWidget(splitter)
+        self.main_layout.addWidget(self.getSplitView(Qt.Orientation.Vertical, upper_view, base_tabview))
+        
+        # self.main_layout.addWidget(Image("UIComponents/icons/pc2.png", height=250))
+        # self.main_layout.addWidget(QColorDialog())
     
     def _init(self):
+        self.setStyleSheet(self.STYLESHEET)
+        
         self.container = QWidget()
         self.main_layout = QVBoxLayout(self.container)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         
         self.setCentralWidget(self.container)
         
@@ -77,6 +165,7 @@ class Window(QMainWindow):
         # File
         new = file.addMenu("New")
         file.addAction("Open Schedule")
+        file.addAction("Load Presentation")
         file.addSeparator()
         file.addActions([QAction("Save Schedule", file), QAction("Save Schedule As", file), QAction("Close Schedule", file)])
         new.addSeparator()
@@ -124,32 +213,218 @@ class Window(QMainWindow):
         alert_content.setFixedWidth(300)
         alert_content.setFixedHeight(130)
         
-        menu_tool_bar.addWidget(IconToolOption("ico.png", 50, None, 15, new_content, "New"))
-        menu_tool_bar.addWidget(IconToolOption("ico.png", 50, None, 15, {"Browse": print}, "Open"))
-        menu_tool_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Save"))
-        menu_tool_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Store"))
+        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, new_content, "New"))
+        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, {"Browse": print}, "Open"))
+        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Save"))
+        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Store"))
         
         self.addToolBar(menu_tool_bar)
         
         live_tools_bar = QToolBar()
         
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Go Live"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Go Live"))
         live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, (alert_content, -1), "Alerts"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, (alert_content, -1), "Alerts"))
         live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Logo"))
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Black"))
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Clear"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Logo"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Black"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Clear"))
         live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolOption("ico.png", 50, None, 15, print, "Live"))
+        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Live"))
         
         self.addToolBar(live_tools_bar)
+    
+    def _getSearchIcon(self, edit: QLineEdit):
+        return SpinIconToolWidget(
+            [("UIComponents/icons/pc1.png", print)],
+            20,
+            {
+                "Any Field": print,
+                None: None,
+                "Title": print,
+                "Author": print,
+                "Copyright": print,
+                "Description": print,
+                "Tags": print,
+                "Filename": print,
+                "Directory": print
+            }
+        )
+    
+    def getSplitView(self, orientation: Qt.Orientation, *sub_widgets: QWidget):
+        splitter = QSplitter(orientation)
+        
+        sub_widgets = sub_widgets if sub_widgets else [QWidget(), QWidget()]
+        
+        for widget in sub_widgets:
+            base_widget = BaseScrollWidget()
+            base_widget.getLayout().setSpacing(0)
+            base_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+            
+            base_widget.addWidget(widget)
+            
+            splitter.addWidget(base_widget)
+        
+        return splitter
+
+    def getTabSettingParams(self):
+        # Left
+        ss_icon = SpinIconToolWidget("UIComponents/icons/pc1.png", 20, None)
+        ss_edit = QLineEdit()
+        ss_edit.setPlaceholderText("Search")
+        ss_edit.setFixedHeight(30)
+        song_search_widget = BaseWidget(QHBoxLayout)
+        song_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        song_search_widget.addWidget(ss_icon)
+        song_search_widget.addWidget(ss_edit)
+        
+        sc_s_edit = QLineEdit()
+        sc_s_edit.setPlaceholderText("Search")
+        sc_s_edit.setFixedHeight(30)
+        scriptures_search_widget = BaseWidget(QHBoxLayout)
+        scriptures_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        scriptures_search_widget.addWidget(SpinIconToolWidget([("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print)], 20, None))
+        scriptures_search_widget.addWidget(sc_s_edit)
+        
+        ms_edit = QLineEdit()
+        ms_edit.setPlaceholderText("Search Any Field")
+        ms_edit.setFixedHeight(30)
+        media_search_widget = BaseWidget(QHBoxLayout)
+        media_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        media_search_widget.addWidget(self._getSearchIcon(ms_edit))
+        media_search_widget.addWidget(ms_edit)
+        
+        ps_edit = QLineEdit()
+        ps_edit.setPlaceholderText("Search Any Field")
+        ps_edit.setFixedHeight(30)
+        presentations_search_widget = BaseWidget(QHBoxLayout)
+        presentations_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        presentations_search_widget.addWidget(self._getSearchIcon(ps_edit))
+        presentations_search_widget.addWidget(ps_edit)
+        
+        ts_edit = QLineEdit()
+        ts_edit.setPlaceholderText("Search Any Field")
+        ts_edit.setFixedHeight(30)
+        themes_search_widget = BaseWidget(QHBoxLayout)
+        themes_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        themes_search_widget.addWidget(self._getSearchIcon(ts_edit))
+        themes_search_widget.addWidget(ts_edit)
+        # -----------------------------------------------------------------------
+        
+        song_options = SectionWidget(
+            {
+                ("SONGS", False): [("UIComponents/icons/pc1.png", "All Songs", print)],
+                ("ONLINE", False): [("UIComponents/icons/pc1.png", "SongSelect", print)],
+                ("COLLECTIONS", True): [],
+                ("MY COLLECTIONS", True): [],
+            }
+        )
+        scriptures_options = SectionWidget(
+            {
+                ("SCRIPTURES", False): [
+                    ("UIComponents/icons/pc1.png", "HCBS", print),
+                    ("UIComponents/icons/pc1.png", "KJV", print),
+                    ("UIComponents/icons/pc1.png", "RVA", print),
+                    (None, "More Available", print),
+                ],
+                ("COLLECTIONS", True): [],
+                ("MY COLLECTIONS", True): []
+            }
+        )
+        media_options = SectionWidget(
+            {
+                ("MEDIA", False): [
+                    ("UIComponents/icons/pc1.png", "Video", print),
+                    ("UIComponents/icons/pc1.png", "Images", print),
+                    ("UIComponents/icons/pc1.png", "Feeds", print),
+                    ("UIComponents/icons/pc1.png", "DVD", print),
+                    ("UIComponents/icons/pc1.png", "Audio", print),
+                ],
+                ("ONLINE", False): [("UIComponents/icons/pc1.png", "Premium Media", print)],
+                ("COLLECTIONS", True): [],
+                ("MY COLLECTIONS", True): [],
+            }
+        )
+        presentations_options = SectionWidget(
+            {
+                ("PRESENTATIONS", False): [("UIComponents/icons/pc1.png", "All Presentations", print)],
+                ("COLLECTIONS", True): [],
+                ("MY COLLECTIONS", True): [],
+            }
+        )
+        themes_options = SectionWidget(
+            {
+                ("THEMES", False): [
+                    ("UIComponents/icons/pc1.png", "Song", print),
+                    ("UIComponents/icons/pc1.png", "Scriptures", print),
+                    ("UIComponents/icons/pc1.png", "Presentation", print),
+                ],
+                ("COLLECTIONS", True): [],
+                ("MY COLLECTIONS", True): [],
+            }
+        )
+        
+        song_widget = BaseWidget()
+        song_widget.getWidget().setProperty("class", "SettingsWidget")
+        song_widget.getLayout().setSpacing(0)
+        song_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        song_widget.addWidget(song_search_widget)
+        song_widget.addWidget(song_options)
+        song_widget.addStretch()
+
+        scriptures_widget = BaseWidget()
+        scriptures_widget.getWidget().setProperty("class", "SettingsWidget")
+        scriptures_widget.getLayout().setSpacing(0)
+        scriptures_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        scriptures_widget.addWidget(scriptures_search_widget)
+        scriptures_widget.addWidget(scriptures_options)
+        scriptures_widget.addStretch()
+
+        media_widget = BaseWidget()
+        media_widget.getWidget().setProperty("class", "SettingsWidget")
+        media_widget.getLayout().setSpacing(0)
+        media_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        media_widget.addWidget(media_search_widget)
+        media_widget.addWidget(media_options)
+        media_widget.addStretch()
+
+        presentations_widget = BaseWidget()
+        presentations_widget.getWidget().setProperty("class", "SettingsWidget")
+        presentations_widget.getLayout().setSpacing(0)
+        presentations_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        presentations_widget.addWidget(presentations_search_widget)
+        presentations_widget.addWidget(presentations_options)
+        presentations_widget.addStretch()
+
+        themes_widget = BaseWidget()
+        themes_widget.getWidget().setProperty("class", "SettingsWidget")
+        themes_widget.getLayout().setSpacing(0)
+        themes_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        themes_widget.addWidget(themes_search_widget)
+        themes_widget.addWidget(themes_options)
+        themes_widget.addStretch()
+
+        # Right
+        song_target = QWidget()
+        scriptures_target = QWidget()
+        media_target = QWidget()
+        presentations_target = QWidget()
+        themes_target = QWidget()
+        
+        return {
+            "Song": self.getSplitView(Qt.Orientation.Horizontal, song_widget, song_target),
+            "Scriptures": self.getSplitView(Qt.Orientation.Horizontal, scriptures_widget, scriptures_target),
+            "Media": self.getSplitView(Qt.Orientation.Horizontal, media_widget, media_target),
+            "Presentation": self.getSplitView(Qt.Orientation.Horizontal, presentations_widget, presentations_target),
+            "Themes": self.getSplitView(Qt.Orientation.Horizontal, themes_widget, themes_target)
+        }
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
     window = Window()
-    window.show()
+    window.showMaximized()
     
     sys.exit(app.exec())
 

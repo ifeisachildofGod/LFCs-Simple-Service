@@ -10,7 +10,7 @@ class _Tab(BaseWidget):
     
     SELECTED_STYLE = """
         QWidget {
-            background-color: lightgray;
+            background-color: #9f9f9f;
             
             border-top-right-radius: 5px;
             border-top-left-radius: 5px;
@@ -24,7 +24,7 @@ class _Tab(BaseWidget):
             background-color: transparent;
         }
         QLabel {
-            color: white;
+            color: #9b9b9b;
         }
     """
     
@@ -56,17 +56,19 @@ class _Tab(BaseWidget):
 class TabView(BaseWidget):
     STYLESHEET = """
         QWidget.TabWidget {
-            background-color: darkblue;
-            border-bottom: 8px solid lightgrey;
+            background-color: #565656;
+            border-bottom: 8px solid #9f9f9f;
         }
     """
     
-    def __init__(self, tabs: dict[str, QWidget]):
+    def __init__(self, tabs: dict[str, QWidget], *extra_title_widgets: QWidget):
         super().__init__()
+        
         self.getLayout().setSpacing(0)
         self.getLayout().setContentsMargins(0, 0, 0, 0)
         
         self.tabs = tabs
+        self.extra_title_widgets = extra_title_widgets
         
         self.tabWidget = QWidget()
         self.tabWidget.setProperty("class", "TabWidget")
@@ -79,8 +81,6 @@ class TabView(BaseWidget):
         self.bodyWidget = QStackedWidget()
         
         self._initTabs()
-        
-        self.tabWidgetLayout.addStretch()
         
         self.main_layout.addWidget(self.tabWidget)
         self.main_layout.addWidget(self.bodyWidget)
@@ -107,6 +107,11 @@ class TabView(BaseWidget):
             
             tab.tab_selected.connect(func)
             
-            self.tabWidgetLayout.addWidget(tab, alignment=Qt.AlignmentFlag.AlignLeft)
+            self.tabWidgetLayout.addWidget(tab)
             self.bodyWidget.addWidget(widget)
+        
+        self.tabWidgetLayout.addStretch()
+        
+        for et_widget in self.extra_title_widgets:
+            self.tabWidgetLayout.addWidget(et_widget)
 

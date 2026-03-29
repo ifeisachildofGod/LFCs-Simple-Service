@@ -3,20 +3,27 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QPainter, QPixmap
 
+from base_widgets import *
 
 class Image(QLabel):
     def __init__(self, path: str, width: int | None = None, height: int | None = None):
         super().__init__()
         
+        self._width = width
+        self._height = height
+        
+        self.setImagePath(path)
+    
+    def setImagePath(self, path: str):
         pixmap = QPixmap(path)
         
-        if width is not None or height is not None:
-            if height is not None and width is None:
-                self.setFixedSize(int(height * pixmap.size().width() / pixmap.size().height()), height)
-            elif width is not None and height is None:
-                self.setFixedSize(width, int(width * pixmap.size().height() / pixmap.size().width()))
+        if self._width is not None or self._height is not None:
+            if self._height is not None and self._width is None:
+                self.setFixedSize(int(self._height * pixmap.size().width() / pixmap.size().height()), self._height)
+            elif self._width is not None and self._height is None:
+                self.setFixedSize(self._width, int(self._width * pixmap.size().height() / pixmap.size().width()))
             else:
-                self.setFixedSize(width, height)
+                self.setFixedSize(self._width, self._height)
         
         self.setScaledContents(True)  # Optional: scale image to fit self
         scaled_pixmap = pixmap.scaled(
@@ -25,6 +32,7 @@ class Image(QLabel):
             Qt.TransformationMode.SmoothTransformation
         )
         self.setPixmap(scaled_pixmap)
+        # self.update()
 
 
 class RotatableLabel(QLabel):
@@ -58,4 +66,21 @@ class RotatableLabel(QLabel):
 
         # Restore the painter's state
         painter.restore()
+
+
+class SeperatorWidget(BaseWidget):
+    def __init__(self, orientation: Qt.Orientation, spacing: int, width: Optional[int] = None, height: Optional[int] = None, color: Optional[str] = None):
+        super().__init__()
+        
+        self.getWidget().setStyleSheet(f"background-color: {color or "black"};")
+        
+        if width:
+            self.getWidget().setFixedWidth(width)
+        if height:
+            self.getWidget().setFixedHeight(height)
+        
+        x_spacing = spacing // 2 if orientation == Qt.Orientation.Horizontal else 0
+        y_spacing = spacing // 2 if orientation == Qt.Orientation.Vertical else 0
+        
+        self.getLayout().setContentsMargins(x_spacing, y_spacing, x_spacing, y_spacing)
 

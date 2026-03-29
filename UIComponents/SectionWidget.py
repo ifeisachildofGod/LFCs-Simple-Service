@@ -14,17 +14,25 @@ from helper_widgets import *
 class _SubSectionOption(BaseWidget):
     CLICKED_STYLESHEET = """
         QWidget._SubSectionOption {
-            background-color: darkcyan
+            background-color: #437eda
+        }
+        
+        QWidget._SubSectionOption QLabel {
+            color: white
         }
     """
     
     UNCLICKED_STYLESHEET = """
+        QWidget._SubSectionOption QLabel {
+            color: #9b9b9b
+        }
+        
         QWidget._SubSectionOption {
             background-color: transparent
         }
         
         QWidget._SubSectionOption:hover {
-            background-color: cyan
+            background-color: #303030
         }
     """
     
@@ -57,7 +65,6 @@ class _SubSectionOption(BaseWidget):
         elif not state:
             self.getWidget().setStyleSheet(self.UNCLICKED_STYLESHEET)
 
-
 class SectionWidget(BaseWidget):
     STYLESHEET = """
         QWidget.SectionWidget QWidget._TopSection {
@@ -70,17 +77,18 @@ class SectionWidget(BaseWidget):
         
         QWidget.SectionWidget QWidget._TopSection QLabel {
             font-weight: bold;
-            color: white;
+            color: #9b9b9b;
         }
     """
     
     def __init__(self, content: dict[str, list[tuple[str | None, str, Callable]]]):
         super().__init__()
         
-        fontSize = 20
+        fontSize = 12
         
         self.getWidget().setProperty("class", "SectionWidget")
         self.getWidget().setStyleSheet(self.STYLESHEET)
+        self.getWidget().setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
         
         self.getLayout().setContentsMargins(0, 0, 0, 0)
         self.getLayout().setSpacing(0)
@@ -110,7 +118,7 @@ class SectionWidget(BaseWidget):
             
             if isDP:
                 open_signal_label = RotatableLabel("▼")
-                open_signal_label.setStyleSheet(f"font-size: {fontSize - 8}px")
+                open_signal_label.setStyleSheet(f"font-size: {fontSize - 5}px")
                 
                 topSection.addWidget(open_signal_label, alignment=Qt.AlignmentFlag.AlignVCenter)
                 
@@ -124,8 +132,6 @@ class SectionWidget(BaseWidget):
             
             self.addWidget(topSection)
             self.addWidget(subSectionWidget)
-        
-        self.addStretch()
     
     def _mf_section_dp_func(self, label: RotatableLabel, ssw: BaseWidget):
         def func(_):
