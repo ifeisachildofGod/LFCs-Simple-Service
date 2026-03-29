@@ -218,6 +218,10 @@ class Window(QMainWindow):
         menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Save"))
         menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Store"))
         
+        spacerWidget = QWidget()
+        spacerWidget.setFixedWidth(600)
+        menu_tool_bar.addWidget(spacerWidget)
+        
         self.addToolBar(menu_tool_bar)
         
         live_tools_bar = QToolBar()
