@@ -43,11 +43,11 @@ class _SubSectionOption(BaseWidget):
         
         self.do_action = do_action
         
-        self.getWidget().setProperty("class", "_SubSectionOption")
-        self.getWidget().setStyleSheet(self.UNCLICKED_STYLESHEET)
+        self.setProperty("class", "_SubSectionOption")
+        self.setStyleSheet(self.UNCLICKED_STYLESHEET)
         
-        self.getWidget().setFixedHeight(25)
-        self.getLayout().setContentsMargins(20, 3, 3, 3)
+        self.setFixedHeight(25)
+        self.setContentsMargins(20, 3, 3, 3)
         
         if icon_path:
             self.addWidget(Image(icon_path, height=15), alignment=Qt.AlignmentFlag.AlignVCenter)
@@ -60,10 +60,10 @@ class _SubSectionOption(BaseWidget):
     
     def setState(self, state: bool):
         if state and self.getWidget().styleSheet() != self.CLICKED_STYLESHEET:
-            self.getWidget().setStyleSheet(self.CLICKED_STYLESHEET)
+            self.setStyleSheet(self.CLICKED_STYLESHEET)
             self.do_action()
         elif not state:
-            self.getWidget().setStyleSheet(self.UNCLICKED_STYLESHEET)
+            self.setStyleSheet(self.UNCLICKED_STYLESHEET)
 
 class SectionWidget(BaseWidget):
     STYLESHEET = """
@@ -86,26 +86,26 @@ class SectionWidget(BaseWidget):
         
         fontSize = 12
         
-        self.getWidget().setProperty("class", "SectionWidget")
-        self.getWidget().setStyleSheet(self.STYLESHEET)
+        self.setProperty("class", "SectionWidget")
+        self.setStyleSheet(self.STYLESHEET)
         self.getWidget().setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
         
-        self.getLayout().setContentsMargins(0, 0, 0, 0)
-        self.getLayout().setSpacing(0)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(0)
         
         for i, ((sectionName, isDP), subSectionOptions) in enumerate(content.items()):
             main_label = QLabel(sectionName)
             main_label.setStyleSheet(f"font-size: {fontSize}px")
             
             topSection = BaseWidget(QHBoxLayout)
-            topSection.getWidget().setProperty("class", "_TopSection")
-            topSection.getWidget().setFixedHeight(40)
-            topSection.getLayout().setContentsMargins(10, 5, 0, 5)
+            topSection.setProperty("class", "_TopSection")
+            topSection.setFixedHeight(40)
+            topSection.setContentsMargins(10, 5, 0, 5)
             
             subSectionWidget = BaseWidget()
-            subSectionWidget.getWidget().setProperty("class", "_BottomSection")
-            subSectionWidget.getLayout().setSpacing(1)
-            subSectionWidget.getLayout().setContentsMargins(0, 0, 0, 0)
+            subSectionWidget.setProperty("class", "_BottomSection")
+            subSectionWidget.setSpacing(1)
+            subSectionWidget.setContentsMargins(0, 0, 0, 0)
             
             for j, subOption in enumerate(subSectionOptions):
                 sso = _SubSectionOption(*subOption)

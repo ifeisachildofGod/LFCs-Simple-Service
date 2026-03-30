@@ -12,7 +12,7 @@ from helper_widgets import *
 
 
 class IconToolBarOption(BaseWidget):
-    def __init__(self, icon_path: str, width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | dict[str, Callable | dict[str, Callable]] | tuple[QWidget, float], title: str | None = None):
+    def __init__(self, icon_path: str, width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | dict[str, Callable | dict[str, Callable] | tuple[Callable, Callable]] | tuple[QWidget, float], title: str | None = None):
         super().__init__()
         
         self.content = content
@@ -39,15 +39,15 @@ class IconToolBarOption(BaseWidget):
             }}
         """
         
-        self.getLayout().setSpacing(0)
-        self.getLayout().setContentsMargins(15, 5, 15, 5)
+        self.setSpacing(0)
+        self.setContentsMargins(15, 5, 15, 5)
         
         self.getWidget().setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
-        self.getWidget().setProperty("class", "IconToolBarOption")
-        self.getWidget().setStyleSheet(self.STYLESHEET)
+        self.setProperty("class", "IconToolBarOption")
+        self.setStyleSheet(self.STYLESHEET)
         
         topWidget = BaseWidget(QHBoxLayout)
-        topWidget.getLayout().setContentsMargins(0, 0, 0, 0)
+        topWidget.setContentsMargins(0, 0, 0, 0)
         topWidget.setProperty("class", "_TopWidget")
         topWidget.addWidget(Image(icon_path, width, height))
         if not isinstance(content, Callable):
@@ -63,7 +63,7 @@ class IconToolBarOption(BaseWidget):
             widget, _ = self.content
             
             def hide_event(_):
-                self.getWidget().setStyleSheet(self.STYLESHEET)
+                self.setStyleSheet(self.STYLESHEET)
                 self.update()
             
             widget.hideEvent = hide_event
@@ -74,7 +74,7 @@ class IconToolBarOption(BaseWidget):
         if isinstance(self.content, Callable):
             return self.content()
         else:
-            self.getWidget().setStyleSheet(self.STYLESHEET.replace(self.HOVER_STYLESHEET, "") + "QWidget.IconToolBarOption {background-color: #30446a}")
+            self.setStyleSheet(self.STYLESHEET.replace(self.HOVER_STYLESHEET, "") + "QWidget.IconToolBarOption {background-color: #30446a}")
             self.update()
             
             if isinstance(self.content, dict):
@@ -82,7 +82,7 @@ class IconToolBarOption(BaseWidget):
                 
                 menu.exec(pos)
                 
-                self.getWidget().setStyleSheet(self.STYLESHEET)
+                self.setStyleSheet(self.STYLESHEET)
                 self.update()
             else:
                 widget, offset_factor = self.content
@@ -100,13 +100,19 @@ class IconToolBarOption(BaseWidget):
         
         menu = QMenu(*args)
         
-        for optionName, optionAction in content.items():
+        for optionName, optionData in content.items():
             if optionName is None:
                 menu.addSeparator()
-            elif isinstance(optionAction, Callable):
-                menu.addAction(optionName, optionAction)
+            elif isinstance(optionData, (Callable, tuple)):
+                optionAction, disableAction = (optionData, None) if isinstance(optionData, Callable) else optionData
+                
+                action = menu.addAction(optionName, optionAction)
+                
+                action.setDisabled(disableAction() if disableAction else False)
+            elif isinstance(optionData, dict):
+                menu.addMenu(self._getMenu(menu, optionData, optionName))
             else:
-                menu.addMenu(self._getMenu(menu, optionAction, optionName))
+                raise
         
         return menu
         

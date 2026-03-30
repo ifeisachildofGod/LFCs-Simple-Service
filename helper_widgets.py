@@ -75,16 +75,16 @@ class SeperatorWidget(BaseWidget):
         x_spacing = spacing // 2 if orientation == Qt.Orientation.Horizontal else 0
         y_spacing = spacing // 2 if orientation == Qt.Orientation.Vertical else 0
         
-        self.getLayout().setContentsMargins(x_spacing, y_spacing, x_spacing, y_spacing)
+        self.setContentsMargins(x_spacing, y_spacing, x_spacing, y_spacing)
         
         widget = BaseWidget()
         
         if width:
-            widget.getWidget().setFixedWidth(width)
+            widget.setFixedWidth(width)
         if height:
-            widget.getWidget().setFixedHeight(height)
+            widget.setFixedHeight(height)
         
-        widget.getWidget().setStyleSheet(f"background-color: {color or "black"};")
+        widget.setStyleSheet(f"background-color: {color or "black"};")
         
         self.addWidget(widget)
 

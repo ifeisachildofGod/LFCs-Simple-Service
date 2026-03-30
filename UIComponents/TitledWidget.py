@@ -21,11 +21,11 @@ class TitledWidget(BaseWidget):
     
     def __init__(self, title: str | QWidget, widget: QWidget, *extra_title_widgets: QWidget, scrollable: bool = False):
         super().__init__()
-        self.getWidget().setProperty("class", "TitledWidget")
-        self.getWidget().setStyleSheet(self.STYLESHEET)
+        self.setProperty("class", "TitledWidget")
+        self.setStyleSheet(self.STYLESHEET)
         
-        self.getLayout().setContentsMargins(0, 0, 0, 0)
-        self.getLayout().setSpacing(0)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(0)
         
         # Title Area
         titleArea = QWidget()
@@ -47,9 +47,9 @@ class TitledWidget(BaseWidget):
         
         # Widget Area
         bodyWidget = BaseScrollWidget() if scrollable else BaseWidget()
-        bodyWidget.getWidget().setProperty("class", "Body")
-        bodyWidget.getLayout().setContentsMargins(0, 0, 0, 0)
-        bodyWidget.getLayout().setSpacing(0)
+        bodyWidget.setProperty("class", "Body")
+        bodyWidget.setContentsMargins(0, 0, 0, 0)
+        bodyWidget.setSpacing(0)
         bodyWidget.addWidget(widget)
         
         self.addWidget(titleArea)

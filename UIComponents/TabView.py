@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal
 from base_widgets import *
 
-class _Tab(BaseWidget):
+class _Tab_1(BaseWidget):
     tab_selected = pyqtSignal()
     
     SELECTED_STYLE = """
@@ -32,17 +32,17 @@ class _Tab(BaseWidget):
     
     def __init__(self, name: str):
         super().__init__()
-        self.getWidget().setFixedHeight(35)
+        self.setFixedHeight(35)
         
-        self.getLayout().setSpacing(0)
-        self.getLayout().setContentsMargins(10, 0, 10, 15)
+        self.setSpacing(0)
+        self.setContentsMargins(10, 0, 10, 15)
         
         self.name = name
         
         self.tab_selected.connect(lambda: self.setState(True))
         self.setState(False)
         
-        self.main_layout.addWidget(QLabel(self.name))
+        self.addWidget(QLabel(self.name))
     
     def setState(self, state):
         if state:
@@ -55,7 +55,32 @@ class _Tab(BaseWidget):
         
         return super().mousePressEvent(a0)
 
-class TabView(BaseWidget):
+class _Tab_2(_Tab_1):
+    tab_selected = pyqtSignal()
+    
+    SELECTED_STYLE = """
+        QWidget {
+            background-color: transparent;
+        }
+        
+        QLabel {
+            color: blue;
+            font-wieght: bold;
+        }
+    """
+    UN_SELECTED_STYLE = """
+        QWidget {
+            background-color: transparent;
+        }
+        
+        QLabel {
+            color: white;
+        }
+    """
+
+class TabView_1(BaseWidget):
+    TAB = _Tab_1
+    
     STYLESHEET = """
         QWidget.TabWidget {
             background-color: #565656;
@@ -66,8 +91,10 @@ class TabView(BaseWidget):
     def __init__(self, tabs: dict[str, QWidget], *extra_title_widgets: QWidget):
         super().__init__()
         
-        self.getLayout().setSpacing(0)
-        self.getLayout().setContentsMargins(0, 0, 0, 0)
+        self.setProperty("class", "TabView")
+        
+        self.setSpacing(0)
+        self.setContentsMargins(0, 0, 0, 0)
         
         self.tabs = tabs
         self.extra_title_widgets = extra_title_widgets
@@ -87,7 +114,7 @@ class TabView(BaseWidget):
         self.main_layout.addWidget(self.tabWidget)
         self.main_layout.addWidget(self.bodyWidget)
     
-    def _mf_tab_changed(self, tab: _Tab, index: int):
+    def _mf_tab_changed(self, tab, index: int):
         def func():
             if hasattr(self, "curr_tab"):
                 self.curr_tab.setState(False)
@@ -100,7 +127,7 @@ class TabView(BaseWidget):
     
     def _initTabs(self):
         for tab_index, (tab_name, widget) in enumerate(self.tabs.items()):
-            tab = _Tab(tab_name)
+            tab = self.TAB(tab_name)
             func = self._mf_tab_changed(tab, tab_index)
             
             if tab_index == 0:
@@ -117,3 +144,21 @@ class TabView(BaseWidget):
         for et_widget in self.extra_title_widgets:
             self.tabWidgetLayout.addWidget(et_widget)
 
+class TabView_2(TabView_1):
+    TAB = _Tab_2
+    
+    STYLESHEET = """
+        QWidget.TabView {
+            background-color: #363636;
+        }
+         
+        QWidget.TabWidget {
+            background-color: transparent;
+            border-bottom: 1px solid #9f9f9f;
+        }
+    """
+    
+    def __init__(self, tabs, *extra_title_widgets):
+        super().__init__(tabs, *extra_title_widgets)
+        
+        self.tabWidgetLayout.setContentsMargins(10, 10, 10, 10)

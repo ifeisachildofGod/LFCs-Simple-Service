@@ -9,11 +9,13 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QIcon
 
-from UIComponents.TabView import TabView
+from UIComponents.TabView import TabView_1
 from UIComponents.TitledWidget import TitledWidget
 from UIComponents.SectionWidget import SectionWidget
 from UIComponents.IconToolBarOption import IconToolBarOption
 from UIComponents.SpinIconToolWidget import SpinIconToolWidget
+
+from AppComponents.dialogs.Options import OptionsDialog
 
 from helper_widgets import *
 
@@ -130,11 +132,11 @@ class Window(QMainWindow):
         )
         
         upper_view = self.getSplitView(Qt.Orientation.Horizontal, schedules, top_left_view)
-        base_tabview = TabView(self.getTabSettingParams())
+        base_tabview = TabView_1(self.getTabSettingParams())
         
         self.main_layout.addWidget(self.getSplitView(Qt.Orientation.Vertical, upper_view, base_tabview))
         
-        # self.main_layout.addWidget(Image("UIComponents/icons/pc2.png", height=250))
+        # self.main_layout.addWidget(Image(r"C:\Users\User\Pictures\Screenshots\Screenshot (203).png", height=250))
         # self.main_layout.addWidget(QColorDialog())
     
     def _init(self):
@@ -155,6 +157,8 @@ class Window(QMainWindow):
         self.setWindowTitle("Simple Service")
 
     def _initMenuBar(self):
+        options_dialog = OptionsDialog()
+        
         menu_bar = self.menuBar()
         
         file = menu_bar.addMenu("File")
@@ -181,7 +185,7 @@ class Window(QMainWindow):
         # Edit
         edit.addActions([QAction("Cut", edit), QAction("Copy", edit), QAction("Paste", edit), QAction("Delete", edit), QAction("Select All", edit)])
         edit.addSeparator()
-        edit.addAction("Options")
+        edit.addAction("Options", lambda: options_dialog.exec())
         
         # Live
         live.addActions([QAction("Go Live", live), QAction("Go Back", live)])
@@ -261,8 +265,8 @@ class Window(QMainWindow):
         
         for widget in sub_widgets:
             base_widget = BaseScrollWidget()
-            base_widget.getLayout().setSpacing(0)
-            base_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+            base_widget.setSpacing(0)
+            base_widget.setContentsMargins(0, 0, 0, 0)
             
             base_widget.addWidget(widget)
             
@@ -277,7 +281,7 @@ class Window(QMainWindow):
         ss_edit.setPlaceholderText("Search")
         ss_edit.setFixedHeight(30)
         song_search_widget = BaseWidget(QHBoxLayout)
-        song_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        song_search_widget.setContentsMargins(0, 0, 0, 0)
         song_search_widget.addWidget(ss_icon)
         song_search_widget.addWidget(ss_edit)
         
@@ -285,7 +289,7 @@ class Window(QMainWindow):
         sc_s_edit.setPlaceholderText("Search")
         sc_s_edit.setFixedHeight(30)
         scriptures_search_widget = BaseWidget(QHBoxLayout)
-        scriptures_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        scriptures_search_widget.setContentsMargins(0, 0, 0, 0)
         scriptures_search_widget.addWidget(SpinIconToolWidget([("UIComponents/icons/pc1.png", print), ("UIComponents/icons/pc2.png", print)], 20, None))
         scriptures_search_widget.addWidget(sc_s_edit)
         
@@ -293,7 +297,7 @@ class Window(QMainWindow):
         ms_edit.setPlaceholderText("Search Any Field")
         ms_edit.setFixedHeight(30)
         media_search_widget = BaseWidget(QHBoxLayout)
-        media_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        media_search_widget.setContentsMargins(0, 0, 0, 0)
         media_search_widget.addWidget(self._getSearchIcon(ms_edit))
         media_search_widget.addWidget(ms_edit)
         
@@ -301,7 +305,7 @@ class Window(QMainWindow):
         ps_edit.setPlaceholderText("Search Any Field")
         ps_edit.setFixedHeight(30)
         presentations_search_widget = BaseWidget(QHBoxLayout)
-        presentations_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        presentations_search_widget.setContentsMargins(0, 0, 0, 0)
         presentations_search_widget.addWidget(self._getSearchIcon(ps_edit))
         presentations_search_widget.addWidget(ps_edit)
         
@@ -309,7 +313,7 @@ class Window(QMainWindow):
         ts_edit.setPlaceholderText("Search Any Field")
         ts_edit.setFixedHeight(30)
         themes_search_widget = BaseWidget(QHBoxLayout)
-        themes_search_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        themes_search_widget.setContentsMargins(0, 0, 0, 0)
         themes_search_widget.addWidget(self._getSearchIcon(ts_edit))
         themes_search_widget.addWidget(ts_edit)
         # -----------------------------------------------------------------------
@@ -368,41 +372,41 @@ class Window(QMainWindow):
         )
         
         song_widget = BaseWidget()
-        song_widget.getWidget().setProperty("class", "SettingsWidget")
-        song_widget.getLayout().setSpacing(0)
-        song_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        song_widget.setProperty("class", "SettingsWidget")
+        song_widget.setSpacing(0)
+        song_widget.setContentsMargins(0, 0, 0, 0)
         song_widget.addWidget(song_search_widget)
         song_widget.addWidget(song_options)
         song_widget.addStretch()
 
         scriptures_widget = BaseWidget()
-        scriptures_widget.getWidget().setProperty("class", "SettingsWidget")
-        scriptures_widget.getLayout().setSpacing(0)
-        scriptures_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        scriptures_widget.setProperty("class", "SettingsWidget")
+        scriptures_widget.setSpacing(0)
+        scriptures_widget.setContentsMargins(0, 0, 0, 0)
         scriptures_widget.addWidget(scriptures_search_widget)
         scriptures_widget.addWidget(scriptures_options)
         scriptures_widget.addStretch()
 
         media_widget = BaseWidget()
-        media_widget.getWidget().setProperty("class", "SettingsWidget")
-        media_widget.getLayout().setSpacing(0)
-        media_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        media_widget.setProperty("class", "SettingsWidget")
+        media_widget.setSpacing(0)
+        media_widget.setContentsMargins(0, 0, 0, 0)
         media_widget.addWidget(media_search_widget)
         media_widget.addWidget(media_options)
         media_widget.addStretch()
 
         presentations_widget = BaseWidget()
-        presentations_widget.getWidget().setProperty("class", "SettingsWidget")
-        presentations_widget.getLayout().setSpacing(0)
-        presentations_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        presentations_widget.setProperty("class", "SettingsWidget")
+        presentations_widget.setSpacing(0)
+        presentations_widget.setContentsMargins(0, 0, 0, 0)
         presentations_widget.addWidget(presentations_search_widget)
         presentations_widget.addWidget(presentations_options)
         presentations_widget.addStretch()
 
         themes_widget = BaseWidget()
-        themes_widget.getWidget().setProperty("class", "SettingsWidget")
-        themes_widget.getLayout().setSpacing(0)
-        themes_widget.getLayout().setContentsMargins(0, 0, 0, 0)
+        themes_widget.setProperty("class", "SettingsWidget")
+        themes_widget.setSpacing(0)
+        themes_widget.setContentsMargins(0, 0, 0, 0)
         themes_widget.addWidget(themes_search_widget)
         themes_widget.addWidget(themes_options)
         themes_widget.addStretch()

@@ -36,12 +36,12 @@ class SpinIconToolWidget(BaseWidget):
         self.content = content
         self.icons_data = icons_data
         
-        self.getLayout().setSpacing(7)
-        self.getLayout().setContentsMargins(4, 4, 4, 4)
+        self.setSpacing(7)
+        self.setContentsMargins(4, 4, 4, 4)
         
         self.getWidget().setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
-        self.getWidget().setProperty("class", "SpinIconToolWidget")
-        self.getWidget().setStyleSheet(STYLESHEET)
+        self.setProperty("class", "SpinIconToolWidget")
+        self.setStyleSheet(STYLESHEET)
         
         if isinstance(self.icons_data, str):
             init_path = self.icons_data
