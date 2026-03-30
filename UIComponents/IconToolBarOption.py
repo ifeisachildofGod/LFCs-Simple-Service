@@ -17,14 +17,18 @@ class IconToolBarOption(BaseWidget):
         
         self.content = content
         
-        STYLESHEET = f"""
+        self.HOVER_STYLESHEET = """
+            QWidget.IconToolBarOption:hover {
+                background-color: #31456b
+            }
+        """
+        
+        self.STYLESHEET = f"""
             QWidget.IconToolBarOption {{
                 background-color: transparent
             }}
             
-            QWidget.IconToolBarOption:hover {{
-                background-color: #31456b
-            }}
+            {self.HOVER_STYLESHEET}
             
             QWidget.IconToolBarOption QWidget._TopWidget QLabel {{
                 font-size: {font_size}px
@@ -35,11 +39,12 @@ class IconToolBarOption(BaseWidget):
             }}
         """
         
-        self.getLayout().setContentsMargins(10, 10, 10, 10)
+        self.getLayout().setSpacing(0)
+        self.getLayout().setContentsMargins(15, 5, 15, 5)
         
         self.getWidget().setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         self.getWidget().setProperty("class", "IconToolBarOption")
-        self.getWidget().setStyleSheet(STYLESHEET)
+        self.getWidget().setStyleSheet(self.STYLESHEET)
         
         topWidget = BaseWidget(QHBoxLayout)
         topWidget.getLayout().setContentsMargins(0, 0, 0, 0)
@@ -57,26 +62,36 @@ class IconToolBarOption(BaseWidget):
         if not isinstance(self.content, Callable) and not isinstance(self.content, dict):
             widget, _ = self.content
             
-            widget.hideEvent = lambda _: self.update()
+            def hide_event(_):
+                self.getWidget().setStyleSheet(self.STYLESHEET)
+                self.update()
+            
+            widget.hideEvent = hide_event
     
     def _clicked(self, a0):
         pos = self.mapToGlobal(QPoint(self.getWidget().x(), self.getWidget().y() + self.getWidget().rect().height() - self.getWidget().contentsMargins().bottom()))
         
         if isinstance(self.content, Callable):
             return self.content()
-        elif isinstance(self.content, dict):
-            menu = self._getMenu(self, self.content)
-            
-            menu.exec(pos)
-            self.update()
         else:
-            widget, offset_factor = self.content
-            offset = widget.rect().width() - self.getWidget().width()
+            self.getWidget().setStyleSheet(self.STYLESHEET.replace(self.HOVER_STYLESHEET, "") + "QWidget.IconToolBarOption {background-color: #30446a}")
+            self.update()
             
-            widget.setWindowFlags(Qt.WindowType.Popup)
-            
-            widget.move(pos - QPoint(int(offset - offset * (offset_factor + 1) / 2), 0))
-            widget.show()
+            if isinstance(self.content, dict):
+                menu = self._getMenu(self, self.content)
+                
+                menu.exec(pos)
+                
+                self.getWidget().setStyleSheet(self.STYLESHEET)
+                self.update()
+            else:
+                widget, offset_factor = self.content
+                offset = widget.rect().width() - self.getWidget().width()
+                
+                widget.setWindowFlags(Qt.WindowType.Popup)
+                
+                widget.move(pos - QPoint(int(offset - offset * (offset_factor + 1) / 2), 0))
+                widget.show()
     
     def _getMenu(self, parent: QMenu | BaseWidget, content: dict, name: Optional[str] = None):
         args = [parent]

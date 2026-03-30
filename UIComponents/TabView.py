@@ -15,6 +15,7 @@ class _Tab(BaseWidget):
             border-top-right-radius: 5px;
             border-top-left-radius: 5px;
         }
+        
         QLabel {
             color: black;
         }
@@ -23,8 +24,9 @@ class _Tab(BaseWidget):
         QWidget {
             background-color: transparent;
         }
+        
         QLabel {
-            color: #9b9b9b;
+            color: white;
         }
     """
     

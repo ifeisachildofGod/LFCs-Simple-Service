@@ -37,12 +37,12 @@ class Window(QMainWindow):
             background-color: #31456b;
         }
         
-        QToolBar {
+        QWidget.ToolBar {
             background-color: #595959;
         }
         
         QSplitter {
-            border: 1px solid black;
+            border: none;
         }
         
         QSplitter::handle {
@@ -142,6 +142,7 @@ class Window(QMainWindow):
         
         self.container = QWidget()
         self.main_layout = QVBoxLayout(self.container)
+        self.main_layout.setSpacing(0)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         
         self.setCentralWidget(self.container)
@@ -199,7 +200,11 @@ class Window(QMainWindow):
         help.addAction("Website")
     
     def _initToolBar(self):
-        menu_tool_bar = QToolBar()
+        menu_tool_bar = QWidget()
+        menu_tool_bar.setProperty("class", "ToolBar")
+        menu_tool_bar_layout = QHBoxLayout(menu_tool_bar)
+        menu_tool_bar_layout.setSpacing(0)
+        menu_tool_bar_layout.setContentsMargins(10, 5, 10, 5)
         
         new_content = {
             "New Schedule": print,
@@ -213,30 +218,24 @@ class Window(QMainWindow):
         alert_content.setFixedWidth(300)
         alert_content.setFixedHeight(130)
         
-        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, new_content, "New"))
-        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, {"Browse": print}, "Open"))
-        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Save"))
-        menu_tool_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Store"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, new_content, "New"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, {"Browse": print}, "Open"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Save"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Store"))
         
-        spacerWidget = QWidget()
-        spacerWidget.setFixedWidth(600)
-        menu_tool_bar.addWidget(spacerWidget)
+        menu_tool_bar_layout.addStretch()
         
-        self.addToolBar(menu_tool_bar)
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Go Live"))
+        menu_tool_bar_layout.addWidget(SeperatorWidget(Qt.Orientation.Horizontal, 10, 2, 30, "#9b9b9b"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, (alert_content, -1), "Alerts"))
+        menu_tool_bar_layout.addWidget(SeperatorWidget(Qt.Orientation.Horizontal, 10, 2, 30, "#9b9b9b"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Logo"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Black"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Clear"))
+        menu_tool_bar_layout.addWidget(SeperatorWidget(Qt.Orientation.Horizontal, 10, 2, 30, "#9b9b9b"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Live"))
         
-        live_tools_bar = QToolBar()
-        
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Go Live"))
-        live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, (alert_content, -1), "Alerts"))
-        live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Logo"))
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Black"))
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Clear"))
-        live_tools_bar.addSeparator()
-        live_tools_bar.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Live"))
-        
-        self.addToolBar(live_tools_bar)
+        self.main_layout.addWidget(menu_tool_bar)
     
     def _getSearchIcon(self, edit: QLineEdit):
         return SpinIconToolWidget(
