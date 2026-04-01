@@ -17,6 +17,8 @@ class _Tab_1(BaseWidget):
         }}
         
         QLabel {{
+            font-size: 15px;
+            font-weight: bold;
             color: {PALETTE["text-2"]};
         }}
     """
@@ -26,6 +28,7 @@ class _Tab_1(BaseWidget):
         }}
         
         QLabel {{
+            font-size: 15px;
             color: {PALETTE["text-1"]};
         }}
     """
@@ -64,8 +67,13 @@ class _Tab_2(_Tab_1):
         }}
         
         QLabel {{
-            color: {PALETTE["selected"]};
+            font-size: 13px;
             font-weight: bold;
+            color: {PALETTE["selected"]};
+        }}
+        
+        QLabel:hover {{
+            color: {PALETTE["text-hover-1"]};
         }}
     """
     UNSELECTED_STYLESHEET = f"""
@@ -75,6 +83,11 @@ class _Tab_2(_Tab_1):
         
         QLabel {{
             color: {PALETTE["text-1"]};
+            font-size: 13px;
+        }}
+        
+        QLabel:hover {{
+            color: {PALETTE["text-hover-2"]};
         }}
     """
 

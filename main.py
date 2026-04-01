@@ -191,7 +191,7 @@ class Window(QMainWindow):
         
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Go Live"))
         menu_tool_bar_layout.addWidget(SeperatorWidget(Qt.Orientation.Horizontal, 10, 2, 30, "#9b9b9b"))
-        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, (alert_content, -1), "Alerts"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, alert_content, "Alerts"))
         menu_tool_bar_layout.addWidget(SeperatorWidget(Qt.Orientation.Horizontal, 10, 2, 30, "#9b9b9b"))
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Logo"))
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Black"))

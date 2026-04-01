@@ -11,7 +11,7 @@ from helper_widgets import *
 
 
 class IconToolBarOption(BaseWidget):
-    def __init__(self, icon_path: Optional[str], width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | list[tuple[str, Callable | dict[str, Callable] | tuple[Callable, Callable]]] | tuple[QWidget, float] | tuple[QWidget, float, float], title: str | None = None):
+    def __init__(self, icon_path: Optional[str], width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | list[tuple[str, Callable | dict[str, Callable] | tuple[Callable, Callable]]] | QWidget, title: str | None = None):
         super().__init__()
         
         self.content = content
@@ -65,13 +65,11 @@ class IconToolBarOption(BaseWidget):
         self.getWidget().mousePressEvent = self._clicked
         
         if not isinstance(self.content, Callable) and not isinstance(self.content, list):
-            widget = self.content[0]
-            
             def hide_event(_):
                 self.setStyleSheet(self.STYLESHEET)
                 self.update()
             
-            widget.hideEvent = hide_event
+            self.content.hideEvent = hide_event
     
     def _clicked(self, a0):
         pos = self.mapToGlobal(QPoint(self.getWidget().x(), self.getWidget().y() + self.getWidget().rect().height() - self.getWidget().contentsMargins().bottom()))
@@ -89,40 +87,47 @@ class IconToolBarOption(BaseWidget):
                 
                 self.setStyleSheet(self.STYLESHEET)
                 self.update()
-            else:
-                widget, offset_x_factor, offset_y_factor = self.content if len(self.content) == 3 else list(self.content) + [1]
+            elif isinstance(self.content, QWidget):
+                screen_geom = self.screen().geometry()
+                g_pos = self.mapToGlobal(self.getWidget().pos())
                 
-                left_most = widget.rect().width() - self.getWidget().width()
-                top_most = widget.rect().height()
+                offset_x_factor = 1 if g_pos.x() < screen_geom.width() / 2 else -1
+                offset_y_factor = 1 if g_pos.y() < screen_geom.height() / 2 else -1
+                
+                left_most = self.content.rect().width() - self.getWidget().width()
+                top_most = self.content.rect().height() + self.getWidget().height()
                 
                 offset_x = int(left_most - left_most * (offset_x_factor + 1) / 2)
                 offset_y = int(top_most - top_most * (offset_y_factor + 1) / 2)
                 
-                widget.setWindowFlags(Qt.WindowType.Popup)
+                self.content.setWindowFlags(Qt.WindowType.Popup)
                 
-                widget.move(pos - QPoint(offset_x, offset_y))
-                widget.show()
+                self.content.move(pos - QPoint(offset_x, offset_y))
+                self.content.show()
     
-    def _getMenu(self, parent: QMenu | BaseWidget, content: list, name: Optional[str] = None):
+    def _getMenu(self, parent: QMenu | BaseWidget, content: list | None, name: Optional[str] = None):
         args = [parent]
         if name is not None:
             args.insert(0, name)
         
         menu = QMenu(*args)
         
-        for optionName, optionData in content:
-            if optionName is None:
+        for data in content:
+            if data is None:
                 menu.addSeparator()
-            elif isinstance(optionData, (Callable, tuple)):
-                optionAction, disableAction = (optionData, None) if isinstance(optionData, Callable) else optionData
-                
-                action = menu.addAction(optionName, optionAction)
-                
-                action.setDisabled(disableAction() if disableAction else False)
-            elif isinstance(optionData, list):
-                menu.addMenu(self._getMenu(menu, optionData, optionName))
             else:
-                raise
+                optionName, optionData = data
+                
+                if isinstance(optionData, (Callable, tuple)):
+                    optionAction, disableAction = (optionData, None) if isinstance(optionData, Callable) else optionData
+                    
+                    action = menu.addAction(optionName, optionAction)
+                    
+                    action.setDisabled(disableAction() if disableAction else False)
+                elif isinstance(optionData, list):
+                    menu.addMenu(self._getMenu(menu, optionData, optionName))
+                else:
+                    raise
         
         return menu
         

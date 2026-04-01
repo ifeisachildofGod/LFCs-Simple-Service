@@ -46,24 +46,20 @@ STYLESHEET = f"""
     
     QSplitter::handle {{
         width: 2px;
-        background-color: black;
+        background-color: {PALETTE["border"]};
     }}
     
     QLabel {{
         color: {PALETTE["text-main"]};
     }}
     
-    QLineEdit {{
-        border: none;
+    QLineEdit, QTextEdit {{
+        border: 1px solid {PALETTE["border"]};
         color: {PALETTE["text-main"]};
         background-color: {PALETTE["header-bg-2"]};
     }}
-
-    QCheckBox {{
-        color: {PALETTE["text-main"]};
-    }}
-
-    QCheckBox {{
+    
+    QCheckBox, QRadioButton {{
         spacing: 6px;
         color: {PALETTE["text-main"]};
     }}
@@ -98,13 +94,13 @@ STYLESHEET = f"""
     QSpinBox {{
         color: {PALETTE["text-main"]};
         background-color: {PALETTE["widget-bg-1"]};
-        border: 1px solid black;
+        border: 1px solid {PALETTE["border"]};
     }}
     
     QComboBox {{
         background-color: {PALETTE["widget-bg-1"]};
         color: {PALETTE["text-main"]};
-        border: 1px solid black;
+        border: 1px solid {PALETTE["border"]};
         padding: 6px;
         min-width: 120px;
     }}
@@ -130,7 +126,7 @@ STYLESHEET = f"""
     QComboBox QAbstractItemView {{
         color: {PALETTE["text-main"]};
         background-color: {PALETTE["widget-bg-1"]};
-        border: 1px solid black;
+        border: 1px solid {PALETTE["border"]};
         selection-background-color: {PALETTE["hover-1"]};
         selection-color: {PALETTE["text-main"]};
     }}

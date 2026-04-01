@@ -84,7 +84,7 @@ class SeperatorWidget(BaseWidget):
         if height:
             widget.setFixedHeight(height)
         
-        widget.setStyleSheet(f"background-color: {color or "black"};")
+        widget.setStyleSheet(f"background-color: {color or PALETTE["border"]};")
         
         self.addWidget(widget)
 

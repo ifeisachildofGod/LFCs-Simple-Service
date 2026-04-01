@@ -15,29 +15,23 @@ from UIComponents.SideBar import SideBar
 from AppComponents.OptionsDialog.subWidgets.main_output import MainOutput
 from AppComponents.OptionsDialog.subWidgets.alternate_output import AltenateOutput
 from AppComponents.OptionsDialog.subWidgets.foldback import Foldback
-from AppComponents.OptionsDialog.subWidgets.service_intervals import ServiceIntervals
 from AppComponents.OptionsDialog.subWidgets.advanced import Advanced
 
 from helper_widgets import *
 
-
 class OptionsDialog(BaseDialogWidget):
-    STYLESHEET = f""" """
-    
     def __init__(self):
         super().__init__("Options", QVBoxLayout)
         
         self._initGeom()
         
         self.setProperty("class", "OptionsDialog")
-        self.setStyleSheet(self.STYLESHEET)
         
         central_widget = QStackedWidget()
         
         central_widget.addWidget(MainOutput())
         central_widget.addWidget(AltenateOutput())
         central_widget.addWidget(Foldback())
-        central_widget.addWidget(ServiceIntervals())
         central_widget.addWidget(Advanced())
         
         main_widget = BaseWidget(QHBoxLayout)
@@ -50,9 +44,7 @@ class OptionsDialog(BaseDialogWidget):
                     ("Alternate Output", lambda: central_widget.setCurrentIndex(1)),
                     ("Foldback", lambda: central_widget.setCurrentIndex(2)),
                     None,
-                    ("Service Intervals", lambda: central_widget.setCurrentIndex(3)),
-                    None,
-                    ("Advanced", lambda: central_widget.setCurrentIndex(4)),
+                    ("Advanced", lambda: central_widget.setCurrentIndex(3)),
                 ]
             )
         )
@@ -71,7 +63,7 @@ class OptionsDialog(BaseDialogWidget):
         self.addWidget(base_widget)
     
     def _initGeom(self):
-        width = 800
+        width = 700
         height = 500
         
         screen_geom = self.screen().geometry()

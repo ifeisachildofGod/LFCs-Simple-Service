@@ -103,9 +103,8 @@ class _Song(BaseScrollWidget):
         sl_widget = BaseWidget()
         sl_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         
-        sl_widget.addWidget(LabeledWidget("Song Font", QComboBox()))
-        sl_widget.addWidget(LabeledWidget(QCheckBox("Show Verse/Chorus label"), QComboBox()))
-        sl_widget.addWidget(LabeledWidget("Labels for Import and Color Coding", QComboBox()))
+        sl_widget.addWidget(LabeledWidget("Song Font", sf_fe := FontEditor("Song Font")))
+        sl_widget.addWidget(LabeledWidget(QCheckBox("Show Verse/Chorus label"), lf_fe := FontEditor("Label Font")))
         
         self.addWidget(SeparatorLabel("Song Layout"))
         self.addWidget(sl_widget)
@@ -119,17 +118,17 @@ class _Scripture(BaseScrollWidget):
         self.setProperty("class", "OptionsMainBG")
         
         # ----------------------------------------------------------
-        ess_widget = BaseWidget() ; ess_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         
-        ess_cb = QComboBox() ; ess_widget.addWidget(LabeledWidget("Enable Scripture Support", ess_cb))
+        ess_widget = BaseWidget() ; ess_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        ess_widget.addWidget(ess_cb := QCheckBox("Enable support for displaying scripture"))
         
         # ----------------------------------------------------------
         
         svn_cbx = QCheckBox("Show verse numbers")
         sr_cbx = QCheckBox("Show Reference")
-        sf_cb = QComboBox()
-        vf_cb = QComboBox()
-        rf_cb = QComboBox()
+        sf_fe = FontEditor("Scripture Font")
+        vf_fe = FontEditor("Verse Font")
+        rf_fe = FontEditor("Reference Font")
         
         r_widget = BaseWidget() ; r_widget.setContentsMargins(10, 0, 10, 0)
         aes_cb = QComboBox() ; aes_cb.addItems(["Before Each Slide", "After Each Slide", "After Each Passage"])
@@ -152,9 +151,9 @@ class _Scripture(BaseScrollWidget):
         
         sl_widget = BaseWidget() ; sl_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         
-        sl_widget.addWidget(LabeledWidget("Scripture Font", sf_cb))
-        sl_widget.addWidget(LabeledWidget(svn_cbx, vf_cb))
-        sl_widget.addWidget(LabeledWidget(sr_cbx, rf_cb))
+        sl_widget.addWidget(LabeledWidget("Scripture Font", sf_fe))
+        sl_widget.addWidget(LabeledWidget(svn_cbx, vf_fe))
+        sl_widget.addWidget(LabeledWidget(sr_cbx, rf_fe))
         sl_widget.addWidget(r_widget)
         sl_widget.addWidget(bonv_cbx)
         sl_widget.addWidget(afsoms_cbx)
@@ -174,15 +173,15 @@ class _Presentation(BaseScrollWidget):
         
         self.setProperty("class", "OptionsMainBG")
         
-        tf_cb = QComboBox()
-        stf_cb = QComboBox()
-        cf_cb = QComboBox()
+        tf_fe = FontEditor("Title Font")
+        stf_fe = FontEditor("SubTitle Font")
+        cf_fe = FontEditor("Content Font")
         
         pl_widget = BaseWidget() ; pl_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         
-        pl_widget.addWidget(LabeledWidget("Title Font", tf_cb))
-        pl_widget.addWidget(LabeledWidget("SubTitle Font                           ", stf_cb))
-        pl_widget.addWidget(LabeledWidget("Content Font", cf_cb))
+        pl_widget.addWidget(LabeledWidget("Title Font", tf_fe))
+        pl_widget.addWidget(LabeledWidget("SubTitle Font                                   ", stf_fe))
+        pl_widget.addWidget(LabeledWidget("Content Font", cf_fe))
         
         self.addWidget(SeparatorLabel("Presentation Layout"))
         self.addWidget(pl_widget)
@@ -220,13 +219,12 @@ class _Alerts(BaseScrollWidget):
         # ----------------------------------------------------------------------------------------------------------
         
         ena_cbx = QCheckBox("Enable Nursery Alert")
-        nf_cb = QComboBox()
-        bc_cb = QComboBox()
+        nf_fe = FontEditor("Nursery Font")
+        bc_ccb = ColorComboBox("red")
         bo_widget = BaseWidget(QHBoxLayout)
         bo_slider = QSlider(Qt.Orientation.Horizontal) ; bo_widget.addWidget(bo_slider)
-        bo_cb = QComboBox() ; bo_widget.addWidget(bo_cb)
+        bo_sb = QSpinBox() ; bo_widget.addWidget(bo_sb)
         sl_sb = QComboBox() ; sl_sb.addItems(["Top Right", "Top Left", "Bottom Right", "Bottom Left"])
-        ar_cbx = QCheckBox("Automatically Remove")
         
         ar_widget = BaseWidget() ; ar_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         a_sb = QSpinBox()
@@ -234,28 +232,28 @@ class _Alerts(BaseScrollWidget):
         
         nao_widget = BaseWidget() ; nao_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         
-        nao_widget.addWidget(LabeledWidget(ena_cbx, nf_cb))
-        nao_widget.addWidget(LabeledWidget("Background Color", bc_cb))
+        nao_widget.addWidget(LabeledWidget(ena_cbx, nf_fe))
+        nao_widget.addWidget(LabeledWidget("Background Color", bc_ccb))
         nao_widget.addWidget(LabeledWidget("Background Opacity", bo_widget))
         nao_widget.addWidget(LabeledWidget("Screen Location", sl_sb))
-        nao_widget.addWidget(LabeledWidget("Automatically Remove", ar_cbx))
+        nao_widget.addWidget(ar_cbx := QCheckBox("Automatically Remove"))
         nao_widget.addWidget(ar_widget)
         
         # ----------------------------------------------------------------------------------------------------------
         
-        ena_cbx1 = QCheckBox("Enable Nursery Alert")
-        nf_cb1 = QComboBox()
-        bc_cb1 = QComboBox()
+        mao_widget = BaseWidget() ; mao_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        
+        ena_cbx1 = QCheckBox("Enable Message Alert")
+        nf_fe1 = FontEditor("Message Font")
+        bc_ccb1 = ColorComboBox("red")
         bo_widget1 = BaseWidget(QHBoxLayout)
         bo_slider1 = QSlider(Qt.Orientation.Horizontal) ; bo_widget1.addWidget(bo_slider1)
-        bo_cb1 = QComboBox() ; bo_widget1.addWidget(bo_cb1)
+        bo_sb1 = QSpinBox() ; bo_widget1.addWidget(bo_sb1)
         sl_sb1 = QComboBox() ; sl_sb1.addItems(["Top", "Bottom"])
         ss_slider = QSlider(Qt.Orientation.Horizontal)
         
-        mao_widget = BaseWidget() ; mao_widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
-        
-        mao_widget.addWidget(LabeledWidget(ena_cbx1, nf_cb1))
-        mao_widget.addWidget(LabeledWidget("Background Color", bc_cb1))
+        mao_widget.addWidget(LabeledWidget(ena_cbx1, nf_fe1))
+        mao_widget.addWidget(LabeledWidget("Background Color", bc_ccb1))
         mao_widget.addWidget(LabeledWidget("Background Opacity", bo_widget1))
         mao_widget.addWidget(LabeledWidget("Screen Location", sl_sb1))
         mao_widget.addWidget(LabeledWidget("Scroll Speed", ss_slider))

@@ -16,6 +16,10 @@
 
     "hover-1": "#31456b",
     "hover-2": "#3d3d3d",
+    "text-hover-1": "#4367ac",
+    "text-hover-2": "#b3b3b3",
+    
+    "border": "#000000",
 
     "selected": "#4786e0",
 
