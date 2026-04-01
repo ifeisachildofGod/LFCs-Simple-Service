@@ -7,20 +7,19 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QPoint, QTimer, Qt
 
-from base_widgets import *
 from helper_widgets import *
 
 
 class IconToolBarOption(BaseWidget):
-    def __init__(self, icon_path: str, width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | dict[str, Callable | dict[str, Callable] | tuple[Callable, Callable]] | tuple[QWidget, float], title: str | None = None):
+    def __init__(self, icon_path: Optional[str], width: Optional[int], height: Optional[int], font_size: Optional[int], content: Callable | list[tuple[str, Callable | dict[str, Callable] | tuple[Callable, Callable]]] | tuple[QWidget, float] | tuple[QWidget, float, float], title: str | None = None):
         super().__init__()
         
         self.content = content
         
-        self.HOVER_STYLESHEET = """
-            QWidget.IconToolBarOption:hover {
-                background-color: #31456b
-            }
+        self.HOVER_STYLESHEET = F"""
+            QWidget.IconToolBarOption:hover {{
+                background-color: {PALETTE["hover-1"]}
+            }}
         """
         
         self.STYLESHEET = f"""
@@ -34,7 +33,7 @@ class IconToolBarOption(BaseWidget):
                 font-size: {font_size}px
             }}
             QWidget.IconToolBarOption QLabel {{
-                color: white;
+                color: {PALETTE["text-1"]};
                 font-size: {font_size}px
             }}
         """
@@ -46,21 +45,27 @@ class IconToolBarOption(BaseWidget):
         self.setProperty("class", "IconToolBarOption")
         self.setStyleSheet(self.STYLESHEET)
         
+        title_label = QLabel(title) if isinstance(title, str) else title
+        
         topWidget = BaseWidget(QHBoxLayout)
         topWidget.setContentsMargins(0, 0, 0, 0)
         topWidget.setProperty("class", "_TopWidget")
-        topWidget.addWidget(Image(icon_path, width, height))
+        if icon_path is not None:
+            topWidget.addWidget(Image(icon_path, width, height))
+        elif title is not None:
+            topWidget.addWidget(title_label)
+        
         if not isinstance(content, Callable):
             topWidget.addWidget(QLabel("▼"))
         
         self.addWidget(topWidget)
-        if title is not None:
-            self.addWidget(QLabel(title), alignment=Qt.AlignmentFlag.AlignHCenter)
+        if title is not None and icon_path is not None:
+            self.addWidget(title_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         
         self.getWidget().mousePressEvent = self._clicked
         
-        if not isinstance(self.content, Callable) and not isinstance(self.content, dict):
-            widget, _ = self.content
+        if not isinstance(self.content, Callable) and not isinstance(self.content, list):
+            widget = self.content[0]
             
             def hide_event(_):
                 self.setStyleSheet(self.STYLESHEET)
@@ -77,7 +82,7 @@ class IconToolBarOption(BaseWidget):
             self.setStyleSheet(self.STYLESHEET.replace(self.HOVER_STYLESHEET, "") + "QWidget.IconToolBarOption {background-color: #30446a}")
             self.update()
             
-            if isinstance(self.content, dict):
+            if isinstance(self.content, list):
                 menu = self._getMenu(self, self.content)
                 
                 menu.exec(pos)
@@ -85,22 +90,27 @@ class IconToolBarOption(BaseWidget):
                 self.setStyleSheet(self.STYLESHEET)
                 self.update()
             else:
-                widget, offset_factor = self.content
-                offset = widget.rect().width() - self.getWidget().width()
+                widget, offset_x_factor, offset_y_factor = self.content if len(self.content) == 3 else list(self.content) + [1]
+                
+                left_most = widget.rect().width() - self.getWidget().width()
+                top_most = widget.rect().height()
+                
+                offset_x = int(left_most - left_most * (offset_x_factor + 1) / 2)
+                offset_y = int(top_most - top_most * (offset_y_factor + 1) / 2)
                 
                 widget.setWindowFlags(Qt.WindowType.Popup)
                 
-                widget.move(pos - QPoint(int(offset - offset * (offset_factor + 1) / 2), 0))
+                widget.move(pos - QPoint(offset_x, offset_y))
                 widget.show()
     
-    def _getMenu(self, parent: QMenu | BaseWidget, content: dict, name: Optional[str] = None):
+    def _getMenu(self, parent: QMenu | BaseWidget, content: list, name: Optional[str] = None):
         args = [parent]
         if name is not None:
             args.insert(0, name)
         
         menu = QMenu(*args)
         
-        for optionName, optionData in content.items():
+        for optionName, optionData in content:
             if optionName is None:
                 menu.addSeparator()
             elif isinstance(optionData, (Callable, tuple)):
@@ -109,7 +119,7 @@ class IconToolBarOption(BaseWidget):
                 action = menu.addAction(optionName, optionAction)
                 
                 action.setDisabled(disableAction() if disableAction else False)
-            elif isinstance(optionData, dict):
+            elif isinstance(optionData, list):
                 menu.addMenu(self._getMenu(menu, optionData, optionName))
             else:
                 raise

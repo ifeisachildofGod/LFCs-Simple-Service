@@ -7,33 +7,27 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QPoint, Qt, pyqtSignal
 from PyQt6.QtGui import QPixmap
 
-from base_widgets import *
 from helper_widgets import *
 
 
 class _SubSectionOption(BaseWidget):
-    CLICKED_STYLESHEET = """
-        QWidget._SubSectionOption {
-            background-color: #437eda
-        }
+    CLICKED_STYLESHEET = f"""
+        QWidget._SubSectionOption {{
+            background-color: {PALETTE["selected"]}
+        }}
         
-        QWidget._SubSectionOption QLabel {
-            color: white
-        }
+        QWidget._SubSectionOption QLabel {{
+            color: {PALETTE["text-1"]}
+        }}
     """
-    
-    UNCLICKED_STYLESHEET = """
-        QWidget._SubSectionOption QLabel {
-            color: #9b9b9b
-        }
-        
-        QWidget._SubSectionOption {
+    UNCLICKED_STYLESHEET = f"""
+        QWidget._SubSectionOption {{
             background-color: transparent
-        }
+        }}
         
-        QWidget._SubSectionOption:hover {
-            background-color: #303030
-        }
+        QWidget._SubSectionOption:hover {{
+            background-color: {PALETTE["hover-2"]}
+        }}
     """
     
     clicked = pyqtSignal()

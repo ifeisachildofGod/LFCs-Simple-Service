@@ -1,0 +1,25 @@
+{
+    "bg-1": "#202020",
+    "bg-2": "#363636",
+
+    "header-bg-1": "#2d2d2d",
+    "header-bg-2": "#2e2e2e",
+    
+    "widget-bg-1": "#2c2c2c",
+    
+    "section-bg": "#363636",
+    
+    "text-main": "#9b9b9b",
+
+    "text-1": "#ffffff",
+    "text-2": "#000000",
+
+    "hover-1": "#31456b",
+    "hover-2": "#3d3d3d",
+
+    "selected": "#4786e0",
+
+    "toolbar-bg": "#595959",
+    "tabview-header-bg-1": "#565656",
+    "tabview-selected-header-bg-1": "#9f9f9f"
+}

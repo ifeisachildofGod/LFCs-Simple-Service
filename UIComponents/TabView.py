@@ -8,26 +8,26 @@ from base_widgets import *
 class _Tab_1(BaseWidget):
     tab_selected = pyqtSignal()
     
-    SELECTED_STYLE = """
-        QWidget {
-            background-color: #9f9f9f;
+    SELECTED_STYLESHEET = f"""
+        QWidget {{
+            background-color: {PALETTE["tabview-selected-header-bg-1"]};
             
             border-top-right-radius: 5px;
             border-top-left-radius: 5px;
-        }
+        }}
         
-        QLabel {
-            color: black;
-        }
+        QLabel {{
+            color: {PALETTE["text-2"]};
+        }}
     """
-    UN_SELECTED_STYLE = """
-        QWidget {
+    UNSELECTED_STYLESHEET = f"""
+        QWidget {{
             background-color: transparent;
-        }
+        }}
         
-        QLabel {
-            color: white;
-        }
+        QLabel {{
+            color: {PALETTE["text-1"]};
+        }}
     """
     
     def __init__(self, name: str):
@@ -46,9 +46,9 @@ class _Tab_1(BaseWidget):
     
     def setState(self, state):
         if state:
-            self.container.setStyleSheet(self.SELECTED_STYLE)
+            self.container.setStyleSheet(self.SELECTED_STYLESHEET)
         else:
-            self.container.setStyleSheet(self.UN_SELECTED_STYLE)
+            self.container.setStyleSheet(self.UNSELECTED_STYLESHEET)
     
     def mousePressEvent(self, a0):
         self.tab_selected.emit()
@@ -58,34 +58,34 @@ class _Tab_1(BaseWidget):
 class _Tab_2(_Tab_1):
     tab_selected = pyqtSignal()
     
-    SELECTED_STYLE = """
-        QWidget {
+    SELECTED_STYLESHEET = f"""
+        QWidget {{
             background-color: transparent;
-        }
+        }}
         
-        QLabel {
-            color: blue;
-            font-wieght: bold;
-        }
+        QLabel {{
+            color: {PALETTE["selected"]};
+            font-weight: bold;
+        }}
     """
-    UN_SELECTED_STYLE = """
-        QWidget {
+    UNSELECTED_STYLESHEET = f"""
+        QWidget {{
             background-color: transparent;
-        }
+        }}
         
-        QLabel {
-            color: white;
-        }
+        QLabel {{
+            color: {PALETTE["text-1"]};
+        }}
     """
 
 class TabView_1(BaseWidget):
     TAB = _Tab_1
     
-    STYLESHEET = """
-        QWidget.TabWidget {
-            background-color: #565656;
-            border-bottom: 8px solid #9f9f9f;
-        }
+    STYLESHEET = f"""
+        QWidget.TabWidget {{
+            background-color: {PALETTE["toolbar-bg"]};
+            border-bottom: 8px solid {PALETTE["tabview-selected-header-bg-1"]};
+        }}
     """
     
     def __init__(self, tabs: dict[str, QWidget], *extra_title_widgets: QWidget):
@@ -147,15 +147,15 @@ class TabView_1(BaseWidget):
 class TabView_2(TabView_1):
     TAB = _Tab_2
     
-    STYLESHEET = """
-        QWidget.TabView {
-            background-color: #363636;
-        }
+    STYLESHEET = f"""
+        QWidget.TabView {{
+            background-color: {PALETTE["section-bg"]};
+        }}
          
-        QWidget.TabWidget {
+        QWidget.TabWidget {{
             background-color: transparent;
-            border-bottom: 1px solid #9f9f9f;
-        }
+            border-bottom: 1px solid {PALETTE["tabview-selected-header-bg-1"]};
+        }}
     """
     
     def __init__(self, tabs, *extra_title_widgets):

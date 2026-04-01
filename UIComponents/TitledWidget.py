@@ -5,18 +5,16 @@ from base_widgets import *
 
 
 class TitledWidget(BaseWidget):
-    STYLESHEET = """
-    QWidget.TitleArea {
-        background-color: #2d2d2d;
-    }
-    
-    QLabel.Title {
-        color: #9b9b9b;
-    }
-    
-    QWidget.Body {
-        background-color: #202020;
-    }
+    STYLESHEET = f"""
+        QWidget.TitleArea {{
+            background-color: {PALETTE["header-bg-1"]};
+        }}
+        
+        QWidget.Body {{
+            background-color: {PALETTE["bg-1"]};
+        }}
+        
+        QLabel.Title {{ }}
     """
     
     def __init__(self, title: str | QWidget, widget: QWidget, *extra_title_widgets: QWidget, scrollable: bool = False):
@@ -32,7 +30,7 @@ class TitledWidget(BaseWidget):
         titleArea.setProperty("class", "TitleArea")
         titleArea.setFixedHeight(30)
         titleAreaLayout = QHBoxLayout(titleArea)
-        titleAreaLayout.setContentsMargins(5, 0, 0, 0)
+        titleAreaLayout.setContentsMargins(5, 0, 5, 0)
         
         if isinstance(title, str):
             titleWidget = QLabel(title)

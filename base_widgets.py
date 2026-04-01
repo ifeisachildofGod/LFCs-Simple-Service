@@ -1,11 +1,12 @@
 
+import json
 from typing import Optional
 from PyQt6.QtWidgets import (
-    QScrollArea, QVBoxLayout, QWidget, QHBoxLayout,
+    QPushButton, QScrollArea, QVBoxLayout, QWidget, QHBoxLayout,
     QDialog
 )
 from PyQt6.QtCore import Qt
-
+from stylesheet import *
 
 class BaseWidget(QWidget):
     def __init__(self, layout_type: Optional[type[QVBoxLayout] | type[QHBoxLayout]] = None):
@@ -79,6 +80,12 @@ class BaseWidget(QWidget):
         
         self.main_layout.insertStretch(*args)
     
+    def addSpacing(self, size: int):
+        self.getLayout().addSpacing(size)
+    
+    def insertSpacing(self, index: int, size: int):
+        self.getLayout().insertSpacing(index, size)
+    
     def getWidget(self):
         return self.container
     
@@ -103,6 +110,14 @@ class BaseScrollWidget(BaseWidget):
         self.setLayout(layout)
         
         layout.addWidget(self.scroll_widget)
+    
+    def setProperty(self, name, value):
+        self.scroll_widget.setProperty(name, value)
+        return super().setProperty(name, value)
+
+    def setStyleSheet(self, stylesheet):
+        self.scroll_widget.setStyleSheet(stylesheet)
+        return super().setStyleSheet(stylesheet)
 
 class BaseDialogWidget(QDialog):
     def __init__(self, title: str, layout_type = None):
@@ -157,4 +172,9 @@ class BaseDialogWidget(QDialog):
     def getLayout(self):
         return self.widget.getLayout()
 
+class PushButton(QPushButton):
+    def __init__(self, text):
+        super().__init__(text)
+        
+        self.setMinimumWidth(70)
 

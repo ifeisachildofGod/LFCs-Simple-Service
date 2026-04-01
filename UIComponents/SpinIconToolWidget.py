@@ -6,12 +6,11 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QPoint, Qt
 
-from base_widgets import *
 from helper_widgets import *
 
 
 class SpinIconToolWidget(BaseWidget):
-    def __init__(self, icons_data: list[tuple[str, Callable]] | str, height: Optional[int], content: Optional[dict[str, Callable | dict[str, Callable]] | tuple[QWidget, float]]):
+    def __init__(self, icons_data: list[tuple[str, Callable]] | str, height: Optional[int], content: Optional[list[tuple[str, Callable | dict[str, Callable]]] | tuple[QWidget, float]]):
         super().__init__(QHBoxLayout)
         
         STYLESHEET = f"""
@@ -19,16 +18,16 @@ class SpinIconToolWidget(BaseWidget):
                 background-color: transparent
             }}
             {
-                """
-                QWidget.SpinIconToolWidget:hover {
-                    background-color: #31456b;
-                }
+                f"""
+                    QWidget.SpinIconToolWidget:hover {{
+                        background-color: {PALETTE["hover-1"]};
+                    }}
                 """
                 if not isinstance(icons_data, str) else
                 ""
             }
             QWidget.SpinIconToolWidget QLabel {{
-                color: #9b9b9b;
+                color: {PALETTE["tabview-selected-header-bg-1"]};
             }}
         """
         
@@ -70,7 +69,7 @@ class SpinIconToolWidget(BaseWidget):
             self.addWidget(dp_widget)
             dp_widget.mousePressEvent = self._clicked
             
-            if not isinstance(self.content, Callable) and not isinstance(self.content, dict):
+            if not isinstance(self.content, Callable) and not isinstance(self.content, list):
                 widget, _ = self.content
                 
                 widget.hideEvent = lambda _: self.update()
@@ -90,7 +89,7 @@ class SpinIconToolWidget(BaseWidget):
     def _clicked(self, a0):
         pos = self.mapToGlobal(QPoint(self.getWidget().x(), self.getWidget().y() + self.getWidget().rect().height() - self.getWidget().contentsMargins().bottom()))
         
-        if isinstance(self.content, dict):
+        if isinstance(self.content, list):
             menu = self._getMenu(self, self.content)
             
             menu.exec(pos)
@@ -104,14 +103,14 @@ class SpinIconToolWidget(BaseWidget):
             widget.move(pos - QPoint(int(offset - offset * (offset_factor + 1) / 2), 0))
             widget.show()
     
-    def _getMenu(self, parent: QMenu | BaseWidget, content: dict, name: Optional[str] = None):
+    def _getMenu(self, parent: QMenu | BaseWidget, content: list, name: Optional[str] = None):
         args = [parent]
         if name is not None:
             args.insert(0, name)
         
         menu = QMenu(*args)
         
-        for optionName, optionAction in content.items():
+        for optionName, optionAction in content:
             if optionName is None:
                 menu.addSeparator()
             elif isinstance(optionAction, Callable):

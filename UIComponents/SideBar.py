@@ -7,40 +7,40 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QPoint, Qt, pyqtSignal
 from PyQt6.QtGui import QPixmap
 
-from base_widgets import *
 from helper_widgets import *
 
 
 class _SideBarOption(BaseWidget):
-    CLICKABLE_STYLESHEET = """
-        QWidget.SideBarOption {
-            background-color: #4786e0;
-        }
+    SELECTED_STYLESHEET = f"""
+        QWidget.SideBarOption {{
+            background-color: {PALETTE["selected"]};
+        }}
         
-        QLabel {
-            color: white;
-        }
+        QLabel {{
+            color: {PALETTE["text-1"]};
+            font-weight: 500;
+        }}
     """
     
-    UNCLICKABLE_STYLESHEET = """
-        QWidget.SideBarOption {
+    UNSELECTED_STYLESHEET = f"""
+        QWidget.SideBarOption {{
             background-color: transparent;
-        }
+        }}
         
-        QWidget.SideBarOption:hover {
-            background-color: #3d3d3d;
-        }
+        QWidget.SideBarOption:hover {{
+            background-color: {PALETTE["hover-2"]};
+        }}
         
-        QLabel {
-            color: #9b9b9b;
-        }
+        QLabel {{
+            color: {PALETTE["text-main"]};
+        }}
     """
     
     def __init__(self, name: str, do_action: Callable):
         super().__init__(QHBoxLayout)
         
         self.setProperty("class", "SideBarOption")
-        self.setStyleSheet(self.UNCLICKABLE_STYLESHEET)
+        self.setStyleSheet(self.UNSELECTED_STYLESHEET)
         
         self.setSpacing(0)
         self.setContentsMargins(10, 8, 10, 8)
@@ -52,10 +52,10 @@ class _SideBarOption(BaseWidget):
     
     def _clicked(self, do: bool):
         if do:
-            self.setStyleSheet(self.CLICKABLE_STYLESHEET)
+            self.setStyleSheet(self.SELECTED_STYLESHEET)
             self.do_action()
         else:
-            self.setStyleSheet(self.UNCLICKABLE_STYLESHEET)
+            self.setStyleSheet(self.UNSELECTED_STYLESHEET)
 
 
 class SideBar(BaseWidget):

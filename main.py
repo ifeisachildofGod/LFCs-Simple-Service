@@ -4,10 +4,11 @@ from PyQt6.QtWidgets import (
     QLayout, QMainWindow, QApplication, QSplitter, QToolBar,
     QVBoxLayout, QWidget, QPushButton, QHBoxLayout,
     QLabel, QLineEdit, QComboBox, QCheckBox, QScrollArea,
-    QFrame, QStackedWidget, QColorDialog, QSpacerItem
+    QFrame, QStackedWidget, QColorDialog, QSpacerItem,
+    QSpinBox
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtGui import QAction, QIcon, QCursor
 
 from UIComponents.TabView import TabView_1
 from UIComponents.TitledWidget import TitledWidget
@@ -15,53 +16,11 @@ from UIComponents.SectionWidget import SectionWidget
 from UIComponents.IconToolBarOption import IconToolBarOption
 from UIComponents.SpinIconToolWidget import SpinIconToolWidget
 
-from AppComponents.dialogs.Options import OptionsDialog
+from AppComponents.OptionsDialog.Options import OptionsDialog
 
 from helper_widgets import *
 
 class Window(QMainWindow):
-    STYLESHEET = """
-        QMenuBar {
-            color: white;
-            background-color: #363636;
-        }
-        
-        QMenuBar::item:selected {
-            background-color: #31456b;
-        }
-        
-        QMenu {
-            color: white;
-            background-color: #202020;
-        }
-        
-        QMenu::item:selected {
-            background-color: #31456b;
-        }
-        
-        QWidget.ToolBar {
-            background-color: #595959;
-        }
-        
-        QSplitter {
-            border: none;
-        }
-        
-        QSplitter::handle {
-            background-color: #1d1d1d;
-        }
-        
-        QWidget.SettingsWidget {
-            background-color: #202020;
-        }
-        
-        QLineEdit {
-            border: none;
-            color: #9b9b9b;
-            background-color: #202020;
-        }
-    """
-    
     def __init__(self):
         super().__init__()
         
@@ -77,38 +36,41 @@ class Window(QMainWindow):
             SpinIconToolWidget(
                 [("UIComponents/icons/pc1.png", print)],
                 20,
-                {
-                    "Add Items": {
-                        "Import Schedule File": print,
-                        None: None,
-                        "New Blank Presentation": print,
-                        None: None,
-                        "Edit Item": print,
-                        "Edit Item": print,
-                        "Edit Item": print,
-                        
-                    },
-                    "Edit Item": print,
-                    None: None,
-                    "Edit Title": print,
-                    "Edit Note": print,
-                    None: None,
-                    "Move Item Up": print,
-                    "Move Item Down": print,
-                    None: None,
-                    "Expand All Items": print,
-                    "Collapse All Items": print,
-                    None: None,
-                    "Auto-Expan Items When Dragging": print,
-                    None: None,
-                    "View": {
-                        "Large Items": print,
-                        "Medium Items": print,
-                        "Small Items": print,
-                        None: None,
-                        "Summary View": print,
-                    },
-                }
+                [
+                    (
+                        "Add Items", [
+                            ("Import Schedule File", print),
+                            None,
+                            ("New Blank Presentation", print),
+                            None,
+                            ("Edit Item", print),
+                            ("Edit Item", print),
+                            ("Edit Item", print)   
+                        ]
+                    ),
+                    ("Edit Item", print),
+                    None,
+                    ("Edit Title", print),
+                    ("Edit Note", print),
+                    None,
+                    ("Move Item Up", print),
+                    ("Move Item Down", print),
+                    None,
+                    ("Expand All Items", print),
+                    ("Collapse All Items", print),
+                    None,
+                    ("Auto-Expan Items When Dragging", print),
+                    None,
+                    (
+                        "View", [
+                            ("Large Items", print),
+                            ("Medium Items", print),
+                            ("Small Items", print),
+                            None,
+                            ("Summary View", print),
+                        ]
+                    ),
+                ]
             )
         )
         
@@ -136,12 +98,10 @@ class Window(QMainWindow):
         
         self.main_layout.addWidget(self.getSplitView(Qt.Orientation.Vertical, upper_view, base_tabview))
         
-        # self.main_layout.addWidget(Image(r"C:\Users\User\Pictures\Screenshots\Screenshot (203).png", height=250))
+        # self.main_layout.addWidget(Image(r"C:\Users\User\Pictures\Screenshots\Screenshot (207).png", height=250))
         # self.main_layout.addWidget(QColorDialog())
     
     def _init(self):
-        self.setStyleSheet(self.STYLESHEET)
-        
         self.container = QWidget()
         self.main_layout = QVBoxLayout(self.container)
         self.main_layout.setSpacing(0)
@@ -210,20 +170,20 @@ class Window(QMainWindow):
         menu_tool_bar_layout.setSpacing(0)
         menu_tool_bar_layout.setContentsMargins(10, 5, 10, 5)
         
-        new_content = {
-            "New Schedule": print,
-            "New Song": print,
-            "New Presentation": print,
-            None: None,
-            "New Song from SongSelect": print
-        }
+        new_content = [
+            ("New Schedule", print),
+            ("New Song", print),
+            ("New Presentation", print),
+            None,
+            ("New Song from SongSelect", print)
+        ]
         alert_content = QWidget()
         alert_content.setStyleSheet("background-color: purple")
         alert_content.setFixedWidth(300)
         alert_content.setFixedHeight(130)
         
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, new_content, "New"))
-        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, {"Browse": print}, "Open"))
+        menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, [("Browse", print)], "Open"))
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Save"))
         menu_tool_bar_layout.addWidget(IconToolBarOption("UIComponents/icons/pc1.png", None, 35, 15, print, "Store"))
         
@@ -245,17 +205,17 @@ class Window(QMainWindow):
         return SpinIconToolWidget(
             [("UIComponents/icons/pc1.png", print)],
             20,
-            {
-                "Any Field": print,
-                None: None,
-                "Title": print,
-                "Author": print,
-                "Copyright": print,
-                "Description": print,
-                "Tags": print,
-                "Filename": print,
-                "Directory": print
-            }
+            [
+                ("Any Field", print),
+                None,
+                ("Title", print),
+                ("Author", print),
+                ("Copyright", print),
+                ("Description", print),
+                ("Tags", print),
+                ("Filename", print),
+                ("Directory", print)
+            ]
         )
     
     def getSplitView(self, orientation: Qt.Orientation, *sub_widgets: QWidget):
@@ -267,6 +227,7 @@ class Window(QMainWindow):
             base_widget = BaseScrollWidget()
             base_widget.setSpacing(0)
             base_widget.setContentsMargins(0, 0, 0, 0)
+            base_widget.setProperty("class", "SC_Bordeless")
             
             base_widget.addWidget(widget)
             
@@ -429,6 +390,7 @@ class Window(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(STYLESHEET)
     
     window = Window()
     window.showMaximized()
